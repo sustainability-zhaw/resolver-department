@@ -8,7 +8,7 @@ from settings import settings
 
 logger = logging.getLogger(__name__)
 
-graphql_client = Client(transport=RequestsHTTPTransport(url=f"http://{settings.DB_HOST}/graphql"))
+graphql_client = None # Client(transport=RequestsHTTPTransport(url=f"http://{settings.DB_HOST}/graphql"))
 
 
 def query_info_object_by_link(link):
@@ -57,6 +57,12 @@ def update_info_object(input):
 
 def run(link):
     logger.info(f"Resolving departments for link {link}")
+
+    global graphql_client
+
+    if graphql_client is None:
+        logger.info(f"connect to database at '{settings.DB_HOST}'")
+        graphql_client = Client(transport=RequestsHTTPTransport(url=f"http://{settings.DB_HOST}/graphql"))
 
     info_object = query_info_object_by_link(link)
 
